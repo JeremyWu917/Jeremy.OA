@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<objects>
+  
+  <object type="Jeremy.OA.BLL.UserInfoService, Jeremy.OA.BLL" name ="UserInfoService" singleton="false" >
+  </object>
+
+  <object type="Jeremy.OA.BLL.RoleInfoService, Jeremy.OA.BLL" name ="RoleInfoService" singleton="false" >
+  </object>
+
+  <object type="Jeremy.OA.BLL.ActionInfoService, Jeremy.OA.BLL" name ="ActionInfoService" singleton="false" >
+  </object>
+
+  <object type="Jeremy.OA.BLL.R_UserInfo_ActionInfoService, Jeremy.OA.BLL" name ="R_UserInfo_ActionInfoService" singleton="false" >
+  </object>
+
+
+
+
+</objects>

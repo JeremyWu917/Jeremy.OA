@@ -1,0 +1,16 @@
+C:\Users\Jeremy\Desktop\4.8\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Jeremy.OA.Common.dll
+C:\Users\Jeremy\Desktop\4.8\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Jeremy.OA.Common.pdb
+C:\Users\Jeremy\Desktop\4.8\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.csproj.CoreCompileInputs.cache
+C:\Users\Jeremy\Desktop\4.8\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.dll
+C:\Users\Jeremy\Desktop\4.8\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.pdb
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Jeremy.OA.Common.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Jeremy.OA.Common.pdb
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Commons.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\log4net.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\bin\Debug\Memcached.ClientLibrary.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.csprojAssemblyReference.cache
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.csproj.CoreCompileInputs.cache
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.csproj.CopyComplete
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.dll
+C:\Users\Jeremy\Desktop\Jeremy.OA\Jeremy.OA.Common\obj\Debug\Jeremy.OA.Common.pdb

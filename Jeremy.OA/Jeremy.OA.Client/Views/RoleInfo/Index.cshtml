@@ -1,0 +1,334 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>角色管理</title>
+    <!-- easyui js包、easyui样式 -->
+    <link href="~/Content/themes/default/easyui.css" rel="stylesheet" />
+    <link href="~/Content/themes/icon.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.7.1.js"></script>
+    <script src="~/Scripts/jquery.easyui.min.js"></script>
+    <!-- 简体中文js包 -->
+    <script src="~/Scripts/easyui-lang-zh_CN.js"></script>
+    <!-- 日期格式js包 -->
+    <script src="~/Scripts/datapattern.js"></script>
+    <!-- ajax js包 -->
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <!-- js校验包 -->
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script type="text/javascript">
+        // 窗体载入Main
+        $(function () {
+            //$('#btnSearch').linkbutton({
+            //    plain: true
+            //});
+            $("#addDiv").css("display", "none");
+            $("#editDiv").css("display", "none");
+            //// 给搜索按钮增加一个单击事件
+            //$("#btnSearch").click(function () {
+            //    // 获取用户输入的搜索数据
+            //    var pars = {
+            //        name: $("#txtSearchName").val(),
+            //        remark: $("#txtSearchRemark").val()
+            //    };
+            //    // 将获取的搜索数据发送到服务端
+            //    loadData(pars);
+            //});
+            loadData();
+        });
+
+        // 方法：载入角色数据
+        function loadData(pars) {
+            $('#tt').datagrid({
+                url: '/RoleInfo/GetRoleInfoList',
+                title: '角色数据表格',
+                width: 700,
+                height: 400,
+                fitColumns: true, //列自适应
+                nowrap: false,
+                idField: 'ID',//主键列的列明
+                loadMsg: '正在加载角色的信息...',
+                pagination: true,//是否有分页
+                singleSelect: false,//是否单行选择
+                pageSize: 5,//页大小，一页多少条数据
+                pageNumber: 1,//当前页，默认的
+                pageList: [5, 10, 15],
+                queryParams: pars,//往后台传递参数
+                columns: [[//c.UserName, c.UserPass, c.Email, c.RegTime
+                    { field: 'ck', checkbox: true, align: 'center', width: 50 },
+                    { field: 'ID', title: '编号', align: 'center', width: 50 },
+                    { field: 'RoleName', title: '角色名称', align: 'center', width: 100 },
+                    { field: 'DelFlag', title: '删除标识', align: 'center', width: 100 },
+                    {
+                        field: 'SubTime', title: '注册时间', width: 100, align: 'center',
+                        formatter: function (value, row, index) {
+                            return (eval(value.replace(/\/Date\((\d+)\)\//gi, "new Date($1)"))).pattern("yyyy-M-d");
+                        }
+                    },
+                    { field: 'Remark', title: '备注', align: 'center', width: 120 },
+                ]],
+                toolbar: [{
+                    id: 'btnDelete',
+                    text: '删除',
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        // 删除角色数据
+                        deleteInfo();
+                    }
+                }, {
+                    id: 'btnAdd',
+                    text: '添加',
+                    iconCls: 'icon-add',
+                    handler: function () {
+                        // 添加角色数据
+                        addInfo();
+                    }
+                }, {
+                    id: 'btnEdit',
+                    text: '编辑',
+                    iconCls: 'icon-edit',
+                    handler: function () {
+                        // 展示需要修改的角色数据
+                        showEditInfo();
+                    }
+                }
+                ]
+            });
+        }// 方法：载入角色数据 结束
+
+        // 方法：删除角色数据
+        function deleteInfo() {
+            // 获取选择的行
+            var rows = $("#tt").datagrid("getSelections");
+            if (!rows || rows.length == 0) {
+                $.messager.alert("提醒", "请选择要删除的记录！", "error");
+                return;
+            }
+
+            // 开始删除
+            $.messager.confirm("提示", "确定要删除数据吗？", function (r) {
+                if (r) {
+                    // 获取要删除的记录的ID值
+                    var rowsLength = rows.length;
+                    var strId = "";
+                    for (var i = 0; i < rowsLength; i++) {
+                        // 把要删除的ID值用逗号连起来
+                        strId = strId + rows[i].ID + ",";
+                    }
+                    // 去除最后一个逗号
+                    strId = strId.substr(0, strId.length - 1);
+                    // 将获取的要删除的记录的ID值发送到服务端
+                    $.post("/RoleInfo/DeleteRoleInfo", { "strId": strId }, function (data) {
+                        if (data == "ok") {
+                            // 重新载入/刷新一下数据
+                            // loadData();
+                            // 显示当前页
+                            $("#tt").datagrid("reload");
+
+                            // 清除datagrid上次选择的记录
+                            $("#tt").datagrid("clearSelections");
+                        }
+                        else {
+                            $.messager.alert("提醒", "删除记录失败！", "error");
+                        }
+                    });
+                }
+            });
+        }// 方法：删除角色数据 结束
+
+        // 方法：添加角色信息
+        function addInfo() {
+            $("#addDiv").css("display", "block");
+            $('#addDiv').dialog({
+                title: "添加角色数据",
+                height: 200,
+                width: 350,
+                collapsible: true,
+                minimizable: true,
+                maximizable: true,
+                resizable: true,
+                mode: true,
+                buttons: [{
+                    text: 'Ok',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+
+                        //表单校验
+                        validateInfo($("#addForm"));
+                        //validateInfo();
+                        //提交表单
+                        $("#addForm").submit();
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $('#addDiv').dialog('close');
+                    }
+                }]
+            });
+        }// 方法：添加角色信息 结束
+
+        // 方法：添加角色信息后
+        function afterAdd(data) {
+            if (data == "ok") {
+                // 关闭添加addDiv
+                $('#addDiv').dialog('close');
+                // 显示当前页
+                $("#tt").datagrid("reload");
+                // 清空addDiv
+                $("#addForm input").val("");
+            }
+            else {
+                $.messager.alert("提醒", "添加失败！", "error");
+            }
+        }// 方法：添加角色信息后 结束
+
+        // 方法：表单校验
+        function validateInfo(control) {
+            control.validate({//表示对哪个form表单进行校验，获取form标签的id属性的值
+                rules: {//表示验证规则
+                    RoleName: "required",
+                    UName: "required",//表示对哪个表单元素进行校验，要写具体的表单元素的name属性的值
+                    Remark: {
+                        required: true
+                    },
+                    UPwd: {
+                        required: true,
+                        minlength: 5
+                    },
+                    Sort: {
+                        required: true
+                    }
+                },
+                messages: {
+                    RoleName: "请输入角色名称",
+                    UName: "请输入用户名",
+                    Remark: {
+                        required: "请输入备注"
+                    },
+                    UPwd: {
+                        required: "请输入密码",
+                        minlength: jQuery.format("字符长度小于{0}")
+                    },
+                    Sort: {
+                        required: "请输入排序"
+                    }
+                }
+            });
+        }// 方法：表单校验 结束
+
+        // 方法：展示需要修改的角色信息
+        function showEditInfo() {
+            // 判断一下用户是否选择了要修改的数据
+            var rows = $("#tt").datagrid("getSelections");
+            if (rows.length != 1) {
+                $.messager.alert("提示", "请选择一条需要修改的数据", "error");
+                return;
+            }
+            // 将要修改的数据查询出来，显示到文本框中
+            var id = rows[0].ID;
+            $.post("/RoleInfo/ShowEditInfo", { "id": id }, function (data) {
+                $("#txtRoleName").val(data.RoleName);
+                $("#txtRemark").val(data.Remark);
+                $("#txtSort").val(data.Sort);
+                $("#txtSubTime").val(ChangeDateFormat(data.SubTime));
+                $("#txtDelFlag").val(data.DelFlag);
+                $("#txtId").val(data.ID);
+            });
+
+            $("#editDiv").css("display", "block");
+            $('#editDiv').dialog({
+                title: "修改角色数据",
+                height: 200,
+                width: 350,
+                collapsible: true,
+                minimizable: true,
+                maximizable: true,
+                resizable: true,
+                mode: true,
+                buttons: [{
+                    text: 'Ok',
+                    iconCls: 'icon-ok',
+                    handler: function () {
+                        //表单校验
+                        validateInfo($("#editForm"));
+                        //提交表单
+                        $("#editForm").submit();
+                    }
+                }, {
+                    text: 'Cancel',
+                    handler: function () {
+                        $('#editDiv').dialog('close');
+                    }
+                }]
+            });
+        }// 方法：展示需要修改的角色信息 结束
+
+        // 方法：更新角色信息后
+        function afterEdit(data) {
+            if (data == "ok") {
+                // 关闭添加addDiv
+                $('#editDiv').dialog('close');
+                // 显示当前页
+                $("#tt").datagrid("reload");
+                // 清空addDiv
+                $("#editForm input").val("");
+            }
+            else {
+                $.messager.alert("提醒", "修改失败！", "error");
+            }
+        }// 方法：更新角色信息后 结束
+
+        // 方法：将序列化成json格式后日期(毫秒数)转成日期格式
+        function ChangeDateFormat(cellval) {
+            var date = new Date(parseInt(cellval.replace("/Date(", "").replace(")/", ""), 10));
+            var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+            var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            return date.getFullYear() + "-" + month + "-" + currentDate;
+        }// 方法：将序列化成json格式后日期(毫秒数)转成日期格式 结束
+
+    </script>
+
+</head>
+<body>
+    <!-- 展示角色数据 tt -->
+    <div>
+        <table id="tt" style="width:700px" title="标题，可以使用代码进行初始化，也可以使用这种熟悉的方式" iconcls="icon-edit">
+        </table>
+    </div>
+
+    <!-- 添加角色信息 addDiv -->
+    <div id="addDiv">
+        @using (Ajax.BeginForm("AddRoleInfo", "RoleInfo", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "afterAdd" }, new { id = "addForm" }))
+        {
+            <table>
+                <tr><td>角色名称</td><td><input type="text" name="RoleName" value="" /></td></tr>
+                <tr><td>排序</td><td><input type="text" name="Sort" value="" /></td></tr>
+                <tr><td>备注信息</td><td><input type="text" name="Remark" value="" /></td></tr>
+            </table>
+        }
+    </div>
+
+    <!-- 更新角色数据 editDiv -->
+    <div id="editDiv">
+        @using (Ajax.BeginForm("EditRoleInfo", "RoleInfo", new { }, new AjaxOptions() { HttpMethod = "post", OnSuccess = "afterEdit" }, new { id = "editForm" }))
+        {
+            <input type="hidden" name="ID" id="txtId" />
+            <input type="hidden" name="SubTime" id="txtSubTime" />
+            <input type="hidden" name="DelFlag" id="txtDelFlag" />
+            <table>
+                <tr><td>角色名称</td><td><input type="text" name="RoleName" id="txtRoleName" /></td></tr>
+                <tr><td>排序</td><td><input type="text" name="Sort" id="txtSort" /></td></tr>
+                <tr><td>备注信息</td><td><input type="text" name="Remark" id="txtRemark" /></td></tr>
+            </table>
+        }
+    </div>
+
+</body>
+</html>
